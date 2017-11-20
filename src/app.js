@@ -1,131 +1,36 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import AppRouter from './routers/AppRouter'
+import configureStore from './store/configureStore'
+import { Provider } from 'react-redux'
+import 'normalize.css/normalize.css'
+import './styles/styles.scss'
 
-class ToDoListApp extends React.Component{
-    constructor (props){
-        super(props)
-        this.state = {
-            items: ["whatup","item 2","worldd"],
-            completeItems: ["item that has been complete", "lol"]
-        }
-        this.addnewItem = this.addnewItem.bind(this)
-        this.deleteItem = this.deleteItem.bind(this)
-        this.deletefurreal = this.deletefurreal.bind(this)
-    }
-    addnewItem(a){
-        this.setState((prevState)=>{
-            return {
-                items: prevState.items.concat(a) 
-            }
-        })
-    }
-   deleteItem(b){
-       console.log("delete item is getting the argument: ", b)
-        this.setState((prevState)=>{
-            return {
-                items: prevState.items.filter((a)=>{
-                    return a !== b
-                }),
-                completeItems: prevState.completeItems.concat(b)
-            }
-        })
-    }
+import { addExpense, removeExpense, editExpense } from "./actions/expenses";
+import { setTextFilter } from "./actions/filters";
+import getVisibleExpenses from './selectors/expenses'
 
-   deletefurreal(b){
-        this.setState((prevState)=>{
-            return {
-                completeItems: prevState.completeItems.filter((a)=>{
-                    return a !== b
-                })
-            }
-        })
-   }
-   render(){
-       return (
-       <div>
-           <h1>ToDoListApp</h1>
-           <Items 
-           items={this.state.items}
-          deleteItem={this.deleteItem} />
-           <AddItem func={this.addnewItem}/>
-           <Fin 
-           completeItems={this.state.completeItems}
-           deletefurreal={this.deletefurreal}
-             />
-       </div>
-       )
-   } 
-}
-//Stateless Functional Components
-class AddItem extends React.Component{
-    constructor(props){
-        super(props)
-        this.handleClick = this.handleClick.bind(this)
-    }
-    handleClick (e) {
-        e.preventDefault()
-        console.log("i've been clicked")
-        this.props.func(e.target.poop.value)
-        e.target.poop.value = ""
+const store = configureStore()
 
-    }
-    render(){
-        return(
-            <form onSubmit={this.handleClick}>
-                <input name='poop'/>
-                <button >Submit</button>
-            </form>
-        )
-    }
-}
-const Items = (props) => {
-    return (
-        <div>
-            <h4>The Todo List</h4>
-                    {props.items.map((item)=>{
-                        return <Item 
-                        singleItem={item}
-                        key={item}
-                        deleteItem={props.deleteItem}
-                         />
-                    })}
-        </div>
 
-    )
-}
-const Item = (props) => {
-    return (
-        <div>
-            {props.singleItem}
-            <button onClick={(a)=>{props.deleteItem(props.singleItem)
-            }}>Complete</button>
-        </div>
+store.dispatch(addExpense({description: 'water bill', amount: 14000, createdAt: 32}))
+store.dispatch(addExpense({description: 'gas bill', amount: 4000, createdAt: 3000}))
+store.dispatch(addExpense({description: 'chocolate bill', amount: 9000, createdAt: 400000}))
+store.dispatch(setTextFilter('bill'))
 
-    )
-}
-const Fin = (props) => {
-    return (
-        <div>
-            <h4>Finished Tasks</h4>
-                    {props.completeItems.map((item)=>{
-                        return <FinTasks 
-                        singleItem={item}
-                        key={item}
-                        deletefurreal={props.deletefurreal}
-                         />
-                    })}
-        </div>
-    )
-}
-const FinTasks = (props) => {
-    return (
-        <div>
-            {props.singleItem}
-            <button onClick={(a)=>{
-                props.deletefurreal(props.singleItem)
-            }}             >Delete</button>
-        </div>
-    )
-}
+// console.log(store);
+const state = store.getState()
+const visibleExpenses = getVisibleExpenses(state.expenses, state.filters)
+// console.log(state);
+// console.log(visibleExpenses);
 
-ReactDOM.render(<ToDoListApp />,document.getElementById('app'))
+
+const jsx = (
+  <div>
+    <Provider store={store}>
+      <AppRouter />
+    </Provider>
+  </div>
+)
+
+ReactDOM.render(jsx, document.getElementById('app'));
