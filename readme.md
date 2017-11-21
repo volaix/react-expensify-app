@@ -1,6 +1,4 @@
-#Git Commands
-
-  git init - creates a new git repo
-  git status - view changes to project
-  git add - add files to staging area
-  git log - view recent commits
+#TODO
+1. Make all the tests work/understand them/Understand Enzyme/Jest
+2. Edit Webpack so that the bundle size is smaller
+3. Edit Webpack so that css is loaded in a different file.
