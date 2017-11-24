@@ -43,3 +43,10 @@ const expenses = [{
   id: 201
 }
 ]
+
+//A valid react element must be returned. Add a bracket after the =>
+const Display = (props) => {
+  <div>
+    <h3>hello world</h3>
+  </div> 
+ }
